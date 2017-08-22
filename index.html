@@ -4,13 +4,15 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Web Assembly</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/black.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
+		
+		<link rel="stylesheet" href="css/custom.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -24,8 +26,176 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<h1>Web Assembly</h1>
+					<h4>A compilation target for the web</h4>
+					<p>
+						<small>Tyler Jones</small>
+					</p>
+				</section>
+
+				<section>
+					<h3>Outline</h3>
+					<ul>
+						<li>What is WASM?</li>
+						<li>Why is it useful?</li>
+						<li>What are some alternatives?</li>
+						<li>What does it look like?</li>
+						<li>Where is wasm heading?</li>
+					</ul>
+				</section>
+
+				<section>
+					<h4>What is WASM?</h4>
+					<p>
+						Web assembly serves as a new compilation target for web developers,
+						available both as a	bytecode or text format.
+					</p>
+					<p>
+						This standard is being developed by major players including Apple,
+						Google, Microsoft, and Mozilla.
+					</p>
+				</section>
+
+				<section>
+					<h4>Why is it useful?</h4>
+					<p>
+						Javascript has historically been powerful enough for most of our
+						needs in the web.
+					</p>
+					<p>
+						However, large file sizes and poor performance in comparison to
+						native languages create significant problems within
+						<a href="http://webassembly.org/docs/use-cases/">certain contexts.</a>
+					</p>
+				</section>
+				
+				<section>
+					<h4>Alternatives</h4>
+					<p>
+						Using Emscripten, you can already compile any source languages
+						supported by LLVM (Rust, C, C++, etc.) into relatively fast JS.
+					</p>
+					<p>
+						Developers needed more power, so a special subset of JS called
+						asm.js was declared. This allows for javascript to be executed much
+						closer to native speeds. (~2x difference)
+					</p>
+				</section>
+
+				<section>
+					<h4>asm.js</h4>
+					<p>asm.js is a low-level subset of javascript that is more easily
+					optimized by AOT compilers and JS engines.</p>
+					<pre>
+						<code class="c"data-trim>
+int f(int i) {
+  return i + 1;
+}
+						</code>
+						<code class="js"data-trim>
+function f(i) {
+  i = i|0;
+  return (i + 1)|0;
+}
+						</code>
+					</pre>
+				</section>
+				
+				<section>
+					<h4>Web Assembly</h4>
+					<p>The text format of wasm is based on 
+					<a href="https://mzl.la/2pnqEaX">s-expressions.</a></p>
+					<p>Everything is stack based in modules.</p>
+					<pre>
+<code class="js"data-trim>
+( func signature locals body )
+</code>
+					</pre>
+					<pre>
+<code class="js"data-trim>
+(module
+  (func (param $lhs i32) (param $rhs i32) (result i32)
+    get_local $lhs
+    get_local $rhs
+    i32.add))
+</code>
+					</pre>
+					<p>It is important to note that C-based code can be called from
+					javascript, and javascript can be called from C.</p>
+				</section>
+
+				<section>
+					<h4>Examples of asm.js/wasm</h4>
+					<ul>
+						<li><a href="http://webassembly.org/demo/Tanks/">Tanks Game</a></li>
+						<li><a href="http://bit.ly/2ppSvnl">Chess Engines</a></li>
+						<li><a href="http://pypyjs.org/">Python Interpreter</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h4>Who uses it, and is it stable?</h4>
+					<p>
+						Currently, web assembly is not frequently used. There are multiple
+						issues preventing widespread adoption, namely:
+					</p>
+					<ol>
+						<li>The standard is still rapidly changing.</li>
+						<li>Browser compatibility is lacking.</li>
+						<li>Source languages are few.</li>
+						<li>DOM access is insufficient.</li>
+					</ol>
+				</section>
+				
+				<section>
+					<h4>Browser support</h4>
+					<p>
+					You must be running at least Firefox 52, Chrome 57 (including Android),
+					or Opera 44. You can also try enabling it in older versions or 
+					<a href="http://caniuse.com/#feat=wasm">other browsers.</a>
+					</p>
+				</section>
+				
+				<section>
+					<h4>Setting up your toolchain</h4>
+					<p>
+						Default installations of LLVM do not support compiling to wasm.
+					</p>
+					<p>
+						Building your toolchain:
+					</br>
+						<a href="https://git.io/vSSQz">LLVM</a> (Supplies C/C++ backend API
+						used by compilers), <a href="https://git.io/vSSDa">Binaryen</a> 
+						(Compiler and infrastructure library), and optionally: 
+						<a href="https://git.io/vSSyp">wabt</a>
+						</br> or </br>
+						<a href="https://git.io/vSSp0">Emscripten</a> (Compiler from C/C++
+						to asm.js/wasm)
+						</br> or </br>
+						<a href="https://git.io/vS9n1">JSIL</a> (Compiles CIL to javascript)
+						and <a href="https://git.io/vS9sd">ilwasm</a> (Backend code generator
+						for JSIL for wasm).
+					</p>
+				</section>
+				
+				<section>
+					<h4>Where is wasm <a href="http://webassembly.org/docs/future-features/">heading</a>?</h4>
+					<ul>
+						<li>Proper threading</li>
+						<li>Increased accessible read/write memory</li>
+						<li>Improved floating point support</li>
+					</ul>
+				</section>
+				
+				<section>
+					<h4>Further Resources</h4>
+					<ul>
+						<li><a href="https://developer.mozilla.org/en-US/docs/WebAssembly">Mozilla Docs</a></li>
+						<li><a href="https://en.wikipedia.org/wiki/Asm.js">Wikipedia Asm.js</a></li>
+						<li><a href="http://asmjs.org/">asmjs.org</a></li>
+					</ul>
+				</section>
 			</div>
 		</div>
 
@@ -33,10 +203,11 @@
 		<script src="js/reveal.js"></script>
 
 		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
+			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
